@@ -154,7 +154,7 @@ const cinezenLegalPages = {
   contact: {
     title: "Contact CineZen",
     body: `<p>Need help, want to report an issue, or have a copyright/privacy question? You can contact CineZen through the official Telegram channels below.</p>
-    <div class="contact-box"><h3>Telegram</h3><p><a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">CineZen HQ</a></p>
+    <div class="contact-box"><h3>Telegram</h3><p><a href="https://t.me/muzxfir" target="_blank" rel="noopener">Contact @muzxfir</a></p>
     <h3>CineZen Bot</h3><p><a href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open CineZen Bot</a></p></div>
     <p style="margin-top:18px">For a movie request, use the Request Movie option on the CineZen website so the request reaches the admin dashboard.</p>`
   }
