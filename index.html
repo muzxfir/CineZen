@@ -51,7 +51,20 @@
     </select>
   </section>
 
-  <section class="section">
+  
+<section class="section latest-section">
+  <div class="section-head">
+    <div>
+      <span class="kicker">JUST RELEASED</span>
+      <h2>Now Available on CineZen</h2>
+    </div>
+    <span id="latestStatus"></span>
+  </div>
+  <div id="latestGrid" class="grid latest-grid"></div>
+  <div id="latestEmpty" class="empty hidden">No movies published yet.</div>
+</section>
+
+<section class="section">
     <div class="section-head">
       <div>
         <span class="kicker">LIVE CATALOG</span>
@@ -92,6 +105,6 @@
   <span>Movie metadata powered by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
 </footer>
 
-<script src="/script.js?v=2"></script>
+<script src="/script.js"></script>
 </body>
 </html>

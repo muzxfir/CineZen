@@ -1,4 +1,10 @@
 const BOT='https://t.me/SRSMOVIEBOT';
+
+const FIREBASE_API_KEY="AIzaSyA9xYUXl1HV7kpjWfIGWQiIPJh5KJX-Ir0";
+const FIREBASE_PROJECT_ID="cinezen-9088f";
+const FIRESTORE_BASE=`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
+let availableMovieIds=new Set();
+
 const IMG='https://image.tmdb.org/t/p/w500';
 const BACK='https://image.tmdb.org/t/p/original';
 let page=1, totalPages=1, loading=false, mode='discover', searchTimer;
@@ -12,6 +18,57 @@ async function api(params){
   const r=await fetch('/api/tmdb?'+qs.toString());
   if(!r.ok) throw new Error((await r.json().catch(()=>({}))).error||'TMDB request failed');
   return r.json();
+}
+
+
+function fsString(v){return v?.stringValue ?? ''}
+function fsInt(v){return Number(v?.integerValue ?? 0)}
+function fsTimestamp(v){return v?.timestampValue ?? ''}
+function parseFirestoreMovie(doc){
+  const f=doc.fields||{};
+  return {
+    id: fsInt(f.tmdbId) || Number((doc.name||'').split('/').pop()),
+    title: fsString(f.title),
+    release_date: fsString(f.releaseDate) || (fsString(f.year)?fsString(f.year)+'-01-01':''),
+    poster_path: fsString(f.posterPath),
+    original_language: fsString(f.language),
+    vote_average: Number(f.rating?.doubleValue ?? f.rating?.integerValue ?? 0),
+    publishedAt: fsTimestamp(f.publishedAt)
+  };
+}
+async function loadLatestMovies(){
+  const status=document.getElementById('latestStatus');
+  const latestGrid=document.getElementById('latestGrid');
+  const empty=document.getElementById('latestEmpty');
+  if(!latestGrid)return;
+  status.textContent='Loading...';
+  try{
+    const r=await fetch(`${FIRESTORE_BASE}/latest_movies?pageSize=100&key=${FIREBASE_API_KEY}`);
+    if(!r.ok) throw new Error('Unable to load latest movies');
+    const data=await r.json();
+    const items=(data.documents||[]).map(parseFirestoreMovie)
+      .sort((a,b)=>String(b.publishedAt).localeCompare(String(a.publishedAt)));
+    availableMovieIds=new Set(items.map(x=>Number(x.id)));
+    status.textContent=`${items.length} available`;
+    empty.classList.toggle('hidden',items.length>0);
+    latestGrid.innerHTML=items.map(m=>{
+      const year=(m.release_date||'').slice(0,4)||'—';
+      return `<article class="card" data-id="${m.id}">
+        <div class="poster">
+          <span class="available-badge">NOW AVAILABLE</span>
+          <img loading="lazy" src="${m.poster_path?IMG+m.poster_path:placeholder}" alt="${escapeHtml(m.title||'Movie')} poster">
+          <span class="score">⭐ ${Number(m.vote_average||0).toFixed(1)}</span>
+        </div>
+        <div class="card-body">
+          <h3>${escapeHtml(m.title||'Untitled')}</h3>
+          <div class="meta"><span>${year}</span><span>${(m.original_language||'').toUpperCase()}</span></div>
+        </div>
+      </article>`;
+    }).join('');
+    latestGrid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openMovie(c.dataset.id));
+  }catch(e){
+    status.textContent=e.message;
+  }
 }
 
 async function loadGenres(){
@@ -87,7 +144,19 @@ async function openMovie(id){
       .trim()
       .replace(/\s+/g,'_')
       .slice(0,64);
-    el('getMovie').href=BOT+'?start='+startPayload;
+    if(availableMovieIds.has(Number(d.id))){
+      el('getMovie').href=BOT+'?start='+startPayload;
+      el('getMovie').textContent='Get Movie on Telegram';
+      el('getMovie').classList.remove('secondary');
+      el('getMovie').style.pointerEvents='';
+      el('getMovie').removeAttribute('aria-disabled');
+    }else{
+      el('getMovie').removeAttribute('href');
+      el('getMovie').textContent='Not Available Yet';
+      el('getMovie').classList.add('secondary');
+      el('getMovie').style.pointerEvents='none';
+      el('getMovie').setAttribute('aria-disabled','true');
+    }
     const imdb=el('imdbLink');
     if(d.imdb_id){imdb.href='https://www.imdb.com/title/'+d.imdb_id+'/';imdb.classList.remove('hidden')}else imdb.classList.add('hidden');
     const trailer=(d.videos?.results||[]).find(v=>v.site==='YouTube'&&v.type==='Trailer') || (d.videos?.results||[]).find(v=>v.site==='YouTube');
@@ -103,4 +172,4 @@ search.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTi
 [genre,language,sort].forEach(x=>x.addEventListener('change',()=>{if(!search.value.trim())loadMovies(true)}));
 el('loadMore').onclick=()=>{if(page<totalPages){page++;loadMovies(false)}};
 function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-loadGenres();loadMovies(true);
+loadLatestMovies();loadGenres();loadMovies(true);
