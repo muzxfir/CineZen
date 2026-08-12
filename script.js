@@ -68,8 +68,17 @@ $('bottomSearch').onclick=()=>{document.getElementById('searchSection').scrollIn
 loadGenres();loadAvailable();renderFavorites();renderRecent();loadFeed(true);
 
 
+
 let lastScrollY = window.scrollY;
 let searchBarHidden = false;
+
+function isSearchActive(){
+  const search = document.getElementById('search');
+  const suggestions = document.getElementById('suggestions');
+  const focused = document.activeElement === search;
+  const suggestionsOpen = suggestions && !suggestions.classList.contains('hidden');
+  return focused || suggestionsOpen;
+}
 
 function updateSearchBarOnScroll(){
   const shell = document.querySelector('.search-shell');
@@ -78,18 +87,20 @@ function updateSearchBarOnScroll(){
   const y = window.scrollY;
   const delta = y - lastScrollY;
 
-  // Always show near top
+  if(isSearchActive()){
+    shell.classList.remove('search-hidden');
+    searchBarHidden = false;
+    lastScrollY = y;
+    return;
+  }
+
   if(y < 140){
     shell.classList.remove('search-hidden');
     searchBarHidden = false;
-  }
-  // Scroll down -> hide
-  else if(delta > 8 && !searchBarHidden){
+  }else if(delta > 8 && !searchBarHidden){
     shell.classList.add('search-hidden');
     searchBarHidden = true;
-  }
-  // Scroll up -> show
-  else if(delta < -8 && searchBarHidden){
+  }else if(delta < -8 && searchBarHidden){
     shell.classList.remove('search-hidden');
     searchBarHidden = false;
   }
@@ -98,6 +109,7 @@ function updateSearchBarOnScroll(){
 }
 
 window.addEventListener('scroll', updateSearchBarOnScroll, {passive:true});
+
 
 document.getElementById('footerShare')?.addEventListener('click',async()=>{
   try{
@@ -183,3 +195,12 @@ document.querySelectorAll(".legal-link").forEach(link=>{
 document.getElementById("legalClose")?.addEventListener("click",closeCinezenLegal);
 legalModal?.addEventListener("click",e=>{if(e.target===legalModal) closeCinezenLegal();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape") closeCinezenLegal();});
+
+function keepSearchVisibleOnFocus(){
+  const shell=document.querySelector('.search-shell');
+  if(shell){
+    shell.classList.remove('search-hidden');
+    searchBarHidden=false;
+  }
+}
+document.getElementById('search')?.addEventListener('focus',keepSearchVisibleOnFocus);
