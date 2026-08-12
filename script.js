@@ -55,8 +55,8 @@ function toggleFavoriteById(id){const exists=favorites.some(x=>Number(x.id)===id
 function setFavoriteButton(m){const id=Number(m.id),exists=favorites.some(x=>Number(x.id)===id);$('favoriteBtn').textContent=exists?'♥ Remove Favorite':'♡ Add Favorite';$('favoriteBtn').onclick=()=>{if(exists)favorites=favorites.filter(x=>Number(x.id)!==id);else favorites.unshift(compactMovie(m));saveLS(LS_FAV,favorites);renderFavorites();setFavoriteButton(m)}}
 function renderFavorites(){$('favCount').textContent=favorites.length+' saved';$('favoritesEmpty').classList.toggle('hidden',favorites.length>0);renderGrid($('favoritesGrid'),favorites,false)}
 async function shareMovie(m){const text=`${m.title||'Movie'} (${yearOf(m)}) — CineZen`;try{if(navigator.share)await navigator.share({title:m.title,text,url:location.href});else{await navigator.clipboard.writeText(text);alert('Movie info copied')}}catch{}}
-function hideSuggestions(){$('suggestions').classList.add('hidden');$('suggestions').innerHTML=''}
-function renderSuggestions(list){const a=list.slice(0,7);if(!a.length)return hideSuggestions();$('suggestions').innerHTML=a.map((m,i)=>`<div class="suggestion" data-i="${i}"><img src="${normalizePoster(m.poster_path)}" alt=""><div><strong>${escapeHtml(m.title||'Untitled')}</strong><small>${yearOf(m)} • ${(m.original_language||'').toUpperCase()}</small></div></div>`).join('');$('suggestions').classList.remove('hidden');$('suggestions').querySelectorAll('.suggestion').forEach(x=>x.onclick=()=>{const m=a[Number(x.dataset.i)];$('search').value=m.title||'';hideSuggestions();openMovie(m.id)})}
+function hideSuggestions(){$('suggestions').classList.add('hidden');$('suggestions').innerHTML='';document.body.classList.remove('search-suggestions-open')}
+function renderSuggestions(list){const a=list.slice(0,7);if(!a.length)return hideSuggestions();$('suggestions').innerHTML=a.map((m,i)=>`<div class="suggestion" data-i="${i}"><img src="${normalizePoster(m.poster_path)}" alt=""><div><strong>${escapeHtml(m.title||'Untitled')}</strong><small>${yearOf(m)} • ${(m.original_language||'').toUpperCase()}</small></div></div>`).join('');$('suggestions').classList.remove('hidden');document.body.classList.add('search-suggestions-open');$('suggestions').querySelectorAll('.suggestion').forEach(x=>x.onclick=()=>{const m=a[Number(x.dataset.i)];$('search').value=m.title||'';hideSuggestions();openMovie(m.id)})}
 $('search').addEventListener('input',()=>{clearTimeout(suggestTimer);const q=$('search').value.trim();if(q.length<2){hideSuggestions();if(!q)loadFeed(true);return}suggestTimer=setTimeout(async()=>{try{const d=await api({action:'search',q,page:1});renderSuggestions(d.results||[])}catch{hideSuggestions()}},280)});
 $('search').addEventListener('keydown',e=>{if(e.key==='Enter'){hideSuggestions();loadFeed(true)}});
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))hideSuggestions()});
@@ -204,3 +204,11 @@ function keepSearchVisibleOnFocus(){
   }
 }
 document.getElementById('search')?.addEventListener('focus',keepSearchVisibleOnFocus);
+
+const suggestionsBox=document.getElementById('suggestions');
+suggestionsBox?.addEventListener('wheel',e=>{
+  e.stopPropagation();
+},{passive:true});
+suggestionsBox?.addEventListener('touchmove',e=>{
+  e.stopPropagation();
+},{passive:true});

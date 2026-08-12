@@ -181,3 +181,24 @@
 }
 body.legal-open{overflow:hidden}
 @media(min-width:760px){.legal-modal{align-items:center}}
+
+/* ===== Mobile search suggestions scroll fix ===== */
+.suggestions{
+  max-height:min(58vh,520px)!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+}
+.suggestions .suggestion{
+  touch-action:manipulation;
+}
+body.search-suggestions-open{
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+}
+@media(max-width:760px){
+  .suggestions{
+    max-height:calc(100dvh - 250px)!important;
+  }
+}
