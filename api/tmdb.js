@@ -1,10 +1,10 @@
 export default async function handler(req, res) {
-  const apiKey = process.env.TMDB_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: 'TMDB_API_KEY is not configured in Vercel.' });
+  const token = process.env.TMDB_API_TOKEN;
+  if (!token) return res.status(500).json({ error: 'TMDB_API_TOKEN is not configured in Vercel.' });
 
   const { action='discover', q='', page='1', genre='', language='', sort='popularity.desc', id='' } = req.query;
   const base = 'https://api.themoviedb.org/3';
-  const params = new URLSearchParams({ api_key: apiKey, language: 'en-US' });
+  const params = new URLSearchParams({ language: 'en-US' });
   let path = '';
 
   if (action === 'genres') {
@@ -31,7 +31,10 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(`${base}${path}?${params.toString()}`, {
-      headers: { 'accept': 'application/json' }
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${token}`
+      }
     });
     const data = await response.json();
     if (!response.ok) return res.status(response.status).json({ error: data.status_message || 'TMDB error' });
