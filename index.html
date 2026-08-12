@@ -1,106 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CineZen | Movie Discovery</title>
-  <meta name="description" content="Discover movies and continue on Telegram with CineZen." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>CineZen</title>
+  <meta name="description" content="CineZen movie discovery"/>
+  <link rel="stylesheet" href="/style.css"/>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="#home">
-      <span class="brand-mark">CZ</span>
-      <span>CineZen</span>
-    </a>
-    <div class="header-actions">
-      <a class="ghost-btn" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Join Channel</a>
-      <a class="primary-btn" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">Open Bot</a>
-    </div>
-  </header>
+<header class="topbar">
+  <a class="brand" href="/">CineZen</a>
+  <nav>
+    <a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Channel</a>
+    <a class="btn" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">Open Bot</a>
+  </nav>
+</header>
 
-  <main id="home">
-    <section class="hero">
-      <div class="hero-overlay"></div>
-      <div class="hero-content">
-        <span class="eyebrow">MOVIES • SERIES • DISCOVERY</span>
-        <h1>Find your next watch.<br><span>Continue on Telegram.</span></h1>
-        <p>Search titles, browse by language and genre, then open the CineZen Telegram bot for available content and updates.</p>
-        <div class="hero-actions">
-          <a class="primary-btn big" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">🤖 Open SADIEMOLBOT</a>
-          <a class="ghost-btn big" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">📢 Join CineZenHQ</a>
-        </div>
-      </div>
-    </section>
-
-    <section class="content-wrap">
-      <div class="search-panel">
-        <div class="search-box">
-          <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="Search movie, year, language or genre..." autocomplete="off" />
-        </div>
-        <div id="filters" class="filters"></div>
-      </div>
-
-      <section class="section">
-        <div class="section-heading">
-          <div>
-            <span class="eyebrow">CURATED FOR YOU</span>
-            <h2>Browse Movies</h2>
-          </div>
-          <span id="resultCount" class="count"></span>
-        </div>
-        <div id="movieGrid" class="movie-grid"></div>
-        <div id="emptyState" class="empty-state hidden">
-          <div class="empty-icon">🎬</div>
-          <h3>No movies found</h3>
-          <p>Try a different title, language or category.</p>
-        </div>
-      </section>
-
-      <section class="telegram-banner">
-        <div>
-          <span class="eyebrow">CINEZEN ON TELEGRAM</span>
-          <h2>Get updates directly on Telegram</h2>
-          <p>Use the bot for discovery and join the channel for announcements.</p>
-        </div>
-        <div class="banner-actions">
-          <a class="primary-btn" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">Open Bot</a>
-          <a class="ghost-btn" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Join Channel</a>
-        </div>
-      </section>
-    </section>
-  </main>
-
-  <footer>
+<main>
+  <section class="hero">
     <div>
-      <strong>CineZen</strong>
-      <p>Movie discovery companion for Telegram.</p>
-    </div>
-    <p class="legal">Only share or link to content you are authorized to distribute.</p>
-  </footer>
-
-  <div id="movieModal" class="modal hidden" aria-hidden="true">
-    <div class="modal-backdrop" data-close-modal></div>
-    <article class="modal-card">
-      <button class="modal-close" data-close-modal aria-label="Close">×</button>
-      <img id="modalPoster" alt="" />
-      <div class="modal-content">
-        <span id="modalMeta" class="eyebrow"></span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
-        <div id="modalTags" class="modal-tags"></div>
-        <div class="modal-actions">
-          <a id="modalBotBtn" class="primary-btn big" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">Get on Telegram</a>
-          <a id="modalTrailerBtn" class="ghost-btn big" href="#" target="_blank" rel="noopener">Watch Trailer</a>
-        </div>
+      <span class="kicker">MOVIES • TMDB POWERED</span>
+      <h1>Discover movies.<br/>Continue on Telegram.</h1>
+      <p>Search live movie data, ratings, posters, genres, trailers and details.</p>
+      <div class="hero-actions">
+        <a class="btn" href="https://t.me/SADIEMOLBOT" target="_blank" rel="noopener">🤖 SADIEMOLBOT</a>
+        <a class="btn secondary" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">📢 CineZenHQ</a>
       </div>
-    </article>
-  </div>
+    </div>
+  </section>
 
-  <script src="script.js"></script>
+  <section class="toolbar">
+    <input id="search" type="search" placeholder="Search any movie..." />
+    <select id="genre"><option value="">All genres</option></select>
+    <select id="language">
+      <option value="">All languages</option>
+      <option value="ml">Malayalam</option>
+      <option value="ta">Tamil</option>
+      <option value="hi">Hindi</option>
+      <option value="en">English</option>
+      <option value="te">Telugu</option>
+      <option value="kn">Kannada</option>
+      <option value="ko">Korean</option>
+      <option value="ja">Japanese</option>
+    </select>
+    <select id="sort">
+      <option value="popularity.desc">Popular</option>
+      <option value="vote_average.desc">Top Rated</option>
+      <option value="primary_release_date.desc">Latest</option>
+      <option value="revenue.desc">Revenue</option>
+    </select>
+  </section>
+
+  <section class="section">
+    <div class="section-head">
+      <div>
+        <span class="kicker">LIVE CATALOG</span>
+        <h2 id="heading">Popular Movies</h2>
+      </div>
+      <span id="status"></span>
+    </div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty hidden">No movies found.</div>
+    <button id="loadMore" class="load-more">Load More</button>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden" aria-hidden="true">
+  <div class="backdrop" data-close></div>
+  <article class="modal-card">
+    <button class="close" data-close>×</button>
+    <img id="modalPoster" alt="">
+    <div class="modal-body">
+      <span id="modalMeta" class="kicker"></span>
+      <h2 id="modalTitle"></h2>
+      <div class="rating-row">
+        <span id="tmdbRating"></span>
+        <a id="imdbLink" target="_blank" rel="noopener" class="imdb hidden">IMDb</a>
+      </div>
+      <p id="modalOverview"></p>
+      <div id="tags" class="tags"></div>
+      <div class="hero-actions">
+        <a id="getMovie" class="btn" target="_blank" rel="noopener">Get Movie on Telegram</a>
+        <a id="trailer" class="btn secondary hidden" target="_blank" rel="noopener">Watch Trailer</a>
+      </div>
+    </div>
+  </article>
+</div>
+
+<footer>
+  <span>© CineZen</span>
+  <span>Movie metadata powered by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
+</footer>
+
+<script src="/script.js"></script>
 </body>
 </html>

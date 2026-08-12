@@ -1,148 +1,98 @@
-const BOT_URL = "https://t.me/SADIEMOLBOT";
-const CHANNEL_URL = "https://t.me/CineZenHQ";
+const BOT='https://t.me/SADIEMOLBOT';
+const IMG='https://image.tmdb.org/t/p/w500';
+const BACK='https://image.tmdb.org/t/p/original';
+let page=1, totalPages=1, loading=false, mode='discover', searchTimer;
 
-const movies = [
-  {
-    title: "Midnight Signal", year: 2026, language: "English", genre: "Thriller", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=700&q=85",
-    description: "A late-night radio host receives a mysterious call that turns a quiet shift into a race against time.",
-    trailer: "https://www.youtube.com/results?search_query=movie+trailer"
-  },
-  {
-    title: "Neon City", year: 2026, language: "English", genre: "Action", quality: "4K",
-    poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=700&q=85",
-    description: "An underground courier crosses a futuristic city to deliver a package everyone wants.",
-    trailer: "https://www.youtube.com/results?search_query=action+movie+trailer"
-  },
-  {
-    title: "Mazha", year: 2025, language: "Malayalam", genre: "Drama", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=700&q=85",
-    description: "A warm human drama about memory, home and the people we return to.",
-    trailer: "https://www.youtube.com/results?search_query=malayalam+movie+trailer"
-  },
-  {
-    title: "Chennai Nights", year: 2025, language: "Tamil", genre: "Crime", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=700&q=85",
-    description: "A rookie investigator follows a trail of clues through the city after midnight.",
-    trailer: "https://www.youtube.com/results?search_query=tamil+crime+movie+trailer"
-  },
-  {
-    title: "Dil Se Door", year: 2026, language: "Hindi", genre: "Romance", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=700&q=85",
-    description: "Two strangers meet during a journey and discover that distance changes everything.",
-    trailer: "https://www.youtube.com/results?search_query=hindi+romance+movie+trailer"
-  },
-  {
-    title: "Silent Orbit", year: 2024, language: "English", genre: "Sci-Fi", quality: "4K",
-    poster: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=700&q=85",
-    description: "A lone astronaut wakes to find the mission altered and Earth no longer responding.",
-    trailer: "https://www.youtube.com/results?search_query=scifi+movie+trailer"
-  },
-  {
-    title: "Kadal", year: 2026, language: "Malayalam", genre: "Thriller", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=85",
-    description: "A coastal mystery begins after a fisherman discovers something impossible at sea.",
-    trailer: "https://www.youtube.com/results?search_query=malayalam+thriller+trailer"
-  },
-  {
-    title: "Level Up", year: 2025, language: "Hindi", genre: "Comedy", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=700&q=85",
-    description: "Three friends accidentally turn a small gaming competition into a nationwide obsession.",
-    trailer: "https://www.youtube.com/results?search_query=hindi+comedy+movie+trailer"
-  },
-  {
-    title: "Red Line", year: 2026, language: "Tamil", genre: "Action", quality: "4K",
-    poster: "https://images.unsplash.com/photo-1525011268546-bf3f9b007f6a?auto=format&fit=crop&w=700&q=85",
-    description: "A suspended officer gets one night to stop a city-wide conspiracy.",
-    trailer: "https://www.youtube.com/results?search_query=tamil+action+movie+trailer"
-  },
-  {
-    title: "After Rain", year: 2024, language: "Malayalam", genre: "Romance", quality: "HD",
-    poster: "https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?auto=format&fit=crop&w=700&q=85",
-    description: "A quiet romance about second chances, old letters and one unexpected reunion.",
-    trailer: "https://www.youtube.com/results?search_query=malayalam+romance+trailer"
-  }
-];
+const el=id=>document.getElementById(id);
+const grid=el('grid'), search=el('search'), genre=el('genre'), language=el('language'), sort=el('sort');
+const placeholder='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="500" height="750"><rect width="100%" height="100%" fill="#151a26"/><text x="50%" y="50%" fill="#657085" text-anchor="middle" font-family="Arial" font-size="32">No Poster</text></svg>`);
 
-const filters = ["All","Malayalam","Tamil","Hindi","English","Action","Thriller","Romance","Drama","Comedy","Sci-Fi"];
-let activeFilter = "All";
-
-const grid = document.getElementById("movieGrid");
-const filterWrap = document.getElementById("filters");
-const searchInput = document.getElementById("searchInput");
-const resultCount = document.getElementById("resultCount");
-const emptyState = document.getElementById("emptyState");
-
-function renderFilters(){
-  filterWrap.innerHTML = filters.map(f => `<button class="filter-btn ${f===activeFilter?'active':''}" data-filter="${f}">${f}</button>`).join("");
-  filterWrap.querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => {
-    activeFilter = btn.dataset.filter;
-    renderFilters();
-    renderMovies();
-  }));
+async function api(params){
+  const qs=new URLSearchParams(params);
+  const r=await fetch('/api/tmdb?'+qs.toString());
+  if(!r.ok) throw new Error((await r.json().catch(()=>({}))).error||'TMDB request failed');
+  return r.json();
 }
 
-function filteredMovies(){
-  const q = searchInput.value.trim().toLowerCase();
-  return movies.filter(m => {
-    const filterMatch = activeFilter === "All" || m.language === activeFilter || m.genre === activeFilter;
-    const haystack = `${m.title} ${m.year} ${m.language} ${m.genre} ${m.quality}`.toLowerCase();
-    return filterMatch && haystack.includes(q);
-  });
+async function loadGenres(){
+  try{
+    const data=await api({action:'genres'});
+    data.genres.forEach(g=>{
+      const o=document.createElement('option'); o.value=g.id; o.textContent=g.name; genre.appendChild(o);
+    });
+  }catch(e){console.error(e)}
 }
 
-function renderMovies(){
-  const list = filteredMovies();
-  resultCount.textContent = `${list.length} title${list.length===1?'':'s'}`;
-  emptyState.classList.toggle("hidden", list.length !== 0);
-  grid.innerHTML = list.map((m, i) => `
-    <article class="movie-card" data-title="${m.title}">
-      <div class="poster-wrap">
-        <img src="${m.poster}" alt="${m.title} poster" loading="lazy">
-        <span class="quality">${m.quality}</span>
+function renderCards(items, append=false){
+  if(!append) grid.innerHTML='';
+  const html=items.map(m=>{
+    const title=m.title||m.original_title||'Untitled';
+    const year=(m.release_date||'').slice(0,4)||'—';
+    const rating=Number(m.vote_average||0).toFixed(1);
+    return `<article class="card" data-id="${m.id}">
+      <div class="poster">
+        <img loading="lazy" src="${m.poster_path?IMG+m.poster_path:placeholder}" alt="${escapeHtml(title)} poster">
+        <span class="score">⭐ ${rating}</span>
       </div>
       <div class="card-body">
-        <h3>${m.title}</h3>
-        <div class="card-meta">
-          <span>${m.year} • ${m.language}</span>
-          <span>${m.genre}</span>
-        </div>
+        <h3>${escapeHtml(title)}</h3>
+        <div class="meta"><span>${year}</span><span>${m.original_language?.toUpperCase()||''}</span></div>
       </div>
-    </article>
-  `).join("");
-
-  grid.querySelectorAll(".movie-card").forEach(card => {
-    card.addEventListener("click", () => openModal(card.dataset.title));
-  });
+    </article>`
+  }).join('');
+  grid.insertAdjacentHTML('beforeend',html);
+  grid.querySelectorAll('.card').forEach(c=>{if(!c.dataset.bound){c.dataset.bound='1';c.onclick=()=>openMovie(c.dataset.id)}});
 }
 
-function openModal(title){
-  const m = movies.find(x => x.title === title);
-  if(!m) return;
-  document.getElementById("modalPoster").src = m.poster;
-  document.getElementById("modalPoster").alt = `${m.title} poster`;
-  document.getElementById("modalMeta").textContent = `${m.year} • ${m.language} • ${m.quality}`;
-  document.getElementById("modalTitle").textContent = m.title;
-  document.getElementById("modalDescription").textContent = m.description;
-  document.getElementById("modalTags").innerHTML = [m.language,m.genre,m.quality].map(x => `<span>${x}</span>`).join("");
-  document.getElementById("modalBotBtn").href = `${BOT_URL}?start=${encodeURIComponent(m.title.replace(/\s+/g,'_'))}`;
-  document.getElementById("modalTrailerBtn").href = m.trailer;
-  const modal = document.getElementById("movieModal");
-  modal.classList.remove("hidden");
-  modal.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
+async function loadMovies(reset=false){
+  if(loading)return; loading=true;
+  if(reset){page=1; grid.innerHTML='';}
+  el('status').textContent='Loading...';
+  try{
+    let data;
+    const q=search.value.trim();
+    if(q){
+      mode='search';
+      data=await api({action:'search',q,page});
+      el('heading').textContent=`Search: ${q}`;
+    }else{
+      mode='discover';
+      data=await api({action:'discover',page,genre:genre.value,language:language.value,sort:sort.value});
+      el('heading').textContent='Browse Movies';
+    }
+    totalPages=Math.min(data.total_pages||1,500);
+    renderCards(data.results||[], page>1);
+    el('status').textContent=`Page ${page} of ${totalPages}`;
+    el('empty').classList.toggle('hidden',(data.results||[]).length>0 || page>1);
+    el('loadMore').classList.toggle('hidden',page>=totalPages);
+  }catch(e){
+    el('status').textContent=e.message;
+  }finally{loading=false}
 }
 
-function closeModal(){
-  const modal = document.getElementById("movieModal");
-  modal.classList.add("hidden");
-  modal.setAttribute("aria-hidden","true");
-  document.body.style.overflow = "";
+async function openMovie(id){
+  try{
+    const d=await api({action:'details',id});
+    el('modalPoster').src=d.poster_path?IMG+d.poster_path:placeholder;
+    el('modalTitle').textContent=d.title||'Untitled';
+    el('modalMeta').textContent=`${(d.release_date||'').slice(0,4)||'—'} • ${d.runtime||'—'} min • ${(d.original_language||'').toUpperCase()}`;
+    el('tmdbRating').textContent=`⭐ TMDB ${Number(d.vote_average||0).toFixed(1)}/10`;
+    el('modalOverview').textContent=d.overview||'No overview available.';
+    el('tags').innerHTML=(d.genres||[]).map(g=>`<span>${escapeHtml(g.name)}</span>`).join('');
+    el('getMovie').href=BOT+'?start='+encodeURIComponent('movie_'+d.id);
+    const imdb=el('imdbLink');
+    if(d.imdb_id){imdb.href='https://www.imdb.com/title/'+d.imdb_id+'/';imdb.classList.remove('hidden')}else imdb.classList.add('hidden');
+    const trailer=(d.videos?.results||[]).find(v=>v.site==='YouTube'&&v.type==='Trailer') || (d.videos?.results||[]).find(v=>v.site==='YouTube');
+    const tr=el('trailer');
+    if(trailer){tr.href='https://www.youtube.com/watch?v='+trailer.key;tr.classList.remove('hidden')}else tr.classList.add('hidden');
+    el('modal').classList.remove('hidden'); document.body.style.overflow='hidden';
+  }catch(e){alert(e.message)}
 }
-
-document.querySelectorAll("[data-close-modal]").forEach(el => el.addEventListener("click", closeModal));
-document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
-searchInput.addEventListener("input", renderMovies);
-
-renderFilters();
-renderMovies();
+function closeModal(){el('modal').classList.add('hidden');document.body.style.overflow=''}
+document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeModal);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+search.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),450)});
+[genre,language,sort].forEach(x=>x.addEventListener('change',()=>{if(!search.value.trim())loadMovies(true)}));
+el('loadMore').onclick=()=>{if(page<totalPages){page++;loadMovies(false)}};
+function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+loadGenres();loadMovies(true);
