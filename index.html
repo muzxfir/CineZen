@@ -9,32 +9,34 @@
 </head>
 <body id="top">
 
-<div id="menuOverlay" class="menu-overlay hidden"></div>
-<aside id="menuDrawer" class="menu-drawer" aria-hidden="true">
-  <div class="menu-top">
-    <div>
-      <div class="menu-brand">CineZen</div>
-      <div class="menu-sub">Movies • Updates • Telegram</div>
-    </div>
-    <button id="menuClose" class="menu-close" aria-label="Close menu">✕</button>
-  </div>
-  
-<nav class="menu-nav">
-  <button type="button" data-target="top">🏠 Home</button>
-  <button type="button" data-target="browse">🎬 Browse Movies</button>
-  <button type="button" data-target="available">🔥 Now Available</button>
-  <button type="button" data-target="browse" data-focus-search="1">📩 Request Movie</button>
-  <button type="button" data-target="about">ℹ️ About CineZen</button>
-  <button type="button" data-target="contact">✉️ Contact Us</button>
-</nav>
 
-</aside>
+<div id="czMenu" class="cz-menu hidden" aria-hidden="true">
+  <div class="cz-menu-backdrop" id="czMenuBackdrop"></div>
+  <aside class="cz-menu-panel">
+    <div class="cz-menu-head">
+      <div>
+        <div class="cz-menu-brand">CineZen</div>
+        <div class="cz-menu-sub">Movies • Updates • Telegram</div>
+      </div>
+      <button id="menuClose" class="cz-icon-btn" type="button" aria-label="Close menu">✕</button>
+    </div>
+    <nav class="cz-menu-links">
+      <button type="button" data-target="top">🏠 Home</button>
+      <button type="button" data-target="browse">🎬 Browse Movies</button>
+      <button type="button" data-target="available">🔥 Now Available</button>
+      <button type="button" data-target="browse" data-focus-search="1">📩 Request Movie</button>
+      <button type="button" data-target="about">ℹ️ About CineZen</button>
+      <button type="button" data-target="contact">✉️ Contact Us</button>
+    </nav>
+  </aside>
+</div>
+
 
 <header class="topbar">
   <a class="brand" href="/">CineZen</a>
   <nav>
     <a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Channel</a>
-    <div class="header-actions"><button id="menuBtn" class="menu-btn" aria-label="Open menu">☰</button><a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a></div>
+    <div class="header-actions"><button id="menuBtn" class="menu-btn" type="button" aria-label="Open menu">☰</button><a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a></div>
   </nav>
 </header>
 
@@ -117,12 +119,15 @@
 
 </main>
 
-<div id="modal" class="modal hidden" aria-hidden="true">
-  <div class="backdrop" data-close></div>
-  <article class="modal-card">
-    <button class="close" data-close>×</button>
-    <img id="modalPoster" alt="">
-    <div class="modal-body">
+
+<div id="modal" class="cz-modal hidden" aria-hidden="true">
+  <div class="cz-modal-backdrop" data-close></div>
+  <article class="cz-modal-card">
+    <button class="cz-modal-close" data-close type="button" aria-label="Close">×</button>
+    <div class="cz-modal-poster-wrap">
+      <img id="modalPoster" class="cz-modal-poster" alt="">
+    </div>
+    <div class="cz-modal-body">
       <span id="modalMeta" class="kicker"></span>
       <h2 id="modalTitle"></h2>
       <div class="rating-row">
@@ -132,13 +137,14 @@
       <p id="modalOverview"></p>
       <div id="tags" class="tags"></div>
       <div class="hero-actions">
-        <a id="getMovie" class="btn" target="_blank" rel="noopener">Get Movie on Telegram</a>
+        <a id="getMovie" class="btn hidden" target="_blank" rel="noopener">Get Movie on Telegram</a>
         <button id="requestMovie" class="btn secondary hidden" type="button">Request This Movie</button>
         <a id="trailer" class="btn secondary hidden" target="_blank" rel="noopener">Watch Trailer</a>
       </div>
     </div>
   </article>
 </div>
+
 
 <footer>
   <span>© CineZen</span>

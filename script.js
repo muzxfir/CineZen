@@ -1,49 +1,34 @@
 
 function openMenu(){
-  const drawer=document.getElementById('menuDrawer');
-  const overlay=document.getElementById('menuOverlay');
-  if(!drawer||!overlay)return;
-  document.body.classList.add('menu-open');
-  drawer.classList.add('open');
-  drawer.setAttribute('aria-hidden','false');
-  overlay.classList.remove('hidden');
-  requestAnimationFrame(()=>overlay.classList.add('show'));
+  const menu=document.getElementById('czMenu');
+  if(!menu)return;
+  menu.classList.remove('hidden');
+  menu.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
 }
 function closeMenu(){
-  const drawer=document.getElementById('menuDrawer');
-  const overlay=document.getElementById('menuOverlay');
-  if(!drawer||!overlay)return;
-  drawer.classList.remove('open');
-  drawer.setAttribute('aria-hidden','true');
-  overlay.classList.remove('show');
-  document.body.classList.remove('menu-open');
-  setTimeout(()=>overlay.classList.add('hidden'),280);
+  const menu=document.getElementById('czMenu');
+  if(!menu)return;
+  menu.classList.add('hidden');
+  menu.setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
 }
 function goToSection(target,focusSearch=false){
   closeMenu();
-  setTimeout(()=>{
-    const section=document.getElementById(target);
-    if(section) section.scrollIntoView({behavior:'smooth',block:'start'});
-    if(focusSearch){
-      setTimeout(()=>document.getElementById('search')?.focus({preventScroll:true}),450);
-    }
-  },320);
+  const section=document.getElementById(target);
+  if(section){
+    setTimeout(()=>section.scrollIntoView({behavior:'smooth',block:'start'}),40);
+  }
+  if(focusSearch){
+    setTimeout(()=>document.getElementById('search')?.focus({preventScroll:true}),500);
+  }
 }
 document.getElementById('menuBtn')?.addEventListener('click',openMenu);
 document.getElementById('menuClose')?.addEventListener('click',closeMenu);
-document.getElementById('menuOverlay')?.addEventListener('click',closeMenu);
-document.querySelectorAll('.menu-nav [data-target]').forEach(btn=>{
+document.getElementById('czMenuBackdrop')?.addEventListener('click',closeMenu);
+document.querySelectorAll('.cz-menu-links [data-target]').forEach(btn=>{
   btn.addEventListener('click',()=>goToSection(btn.dataset.target,btn.dataset.focusSearch==='1'));
 });
-
-
-
-
-
-
-
-
-
 
 const revealObserver=new IntersectionObserver(entries=>{
   entries.forEach(entry=>{
@@ -269,10 +254,14 @@ async function openMovie(id){
     const trailer=(d.videos?.results||[]).find(v=>v.site==='YouTube'&&v.type==='Trailer') || (d.videos?.results||[]).find(v=>v.site==='YouTube');
     const tr=el('trailer');
     if(trailer){tr.href='https://www.youtube.com/watch?v='+trailer.key;tr.classList.remove('hidden')}else tr.classList.add('hidden');
-    el('modal').classList.remove('hidden'); document.body.style.overflow='hidden';
+    el('modal').classList.remove('hidden'); el('modal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
   }catch(e){alert(e.message)}
 }
-function closeModal(){el('modal').classList.add('hidden'); if(!document.body.classList.contains('menu-open')) document.body.style.overflow=''}
+function closeModal(){
+  el('modal').classList.add('hidden');
+  el('modal').setAttribute('aria-hidden','true');
+  document.body.style.overflow='';
+}
 document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeModal);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 search.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),450)});
