@@ -1,47 +1,25 @@
-# CineZen — TMDB + Vercel
+# CineZen — TMDB Read Access Token Version
 
-This version loads live movie data from TMDB and keeps your TMDB API key on the server side using a Vercel Environment Variable.
+## Vercel setup
 
-## Deploy to Vercel
+Add ONE environment variable:
 
-1. Upload all files/folders in this project to a GitHub repository.
-2. Import the repository into Vercel.
-3. Open Vercel Project → Settings → Environment Variables.
-4. Add:
-   - Name: `TMDB_API_KEY`
-   - Value: your TMDB v3 API key
-   - Enable it for Production (and Preview if wanted).
-5. Redeploy the project after adding/changing the environment variable.
+Name:
+TMDB_API_TOKEN
 
-Do NOT place the API key inside `script.js` or `index.html`.
+Value:
+Paste your TMDB **API Read Access Token** (the long token beginning with `ey...`).
 
-## Features
+Select Production and Preview, save it, then redeploy.
 
-- Live popular/discover movie catalog
-- Search movie database
-- Genre filter
-- Language filter
-- Popular / Top Rated / Latest sorting
-- Poster, year, rating and original language
-- Movie detail modal
-- TMDB rating
-- IMDb button when TMDB supplies an IMDb ID
-- YouTube trailer when available
-- Telegram Get Movie button → `SADIEMOLBOT`
-- Channel button → `CineZenHQ`
-- Pagination / Load More
-- Mobile responsive
+This version sends the token only from the Vercel serverless API route as:
+Authorization: Bearer <token>
 
-## Telegram bot deep link
+Do not put the token in index.html or script.js.
 
-Movie detail buttons use this format:
+## Telegram
+Bot: SADIEMOLBOT
+Channel: CineZenHQ
 
-`https://t.me/SADIEMOLBOT?start=movie_<TMDB_ID>`
-
-Your Telegram bot can read that `/start` parameter and return the matching authorized content or information.
-
-## Important
-
-TMDB supplies movie metadata, not movie files. Only publish or distribute content you are authorized to share.
-
-This product uses the TMDB API but is not endorsed or certified by TMDB.
+## Security
+If a token/key has been publicly shared in a screenshot or chat, rotate/regenerate it before using the site publicly.
