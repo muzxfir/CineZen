@@ -1,4 +1,4 @@
-const BOT='https://t.me/SADIEMOLBOT';
+const BOT='https://t.me/SRSMOVIEBOT';
 const IMG='https://image.tmdb.org/t/p/w500';
 const BACK='https://image.tmdb.org/t/p/original';
 let page=1, totalPages=1, loading=false, mode='discover', searchTimer;
