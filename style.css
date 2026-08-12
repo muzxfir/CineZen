@@ -234,3 +234,5 @@ body.search-suggestions-open .bottom-nav{
 
 .cz-imdb-btn{background:#f5c518;color:#000;border:0;border-radius:10px;padding:10px 16px;font-weight:800;cursor:pointer}
 #countryFilter,#yearFilter,#typeFilter{min-height:52px;border-radius:16px;background:#101624;color:#fff;border:1px solid #2b3345;padding:0 14px;margin-top:10px}
+
+.footer-socials a[href*="instagram.com"]{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;border-color:transparent;font-size:25px;font-weight:900}
