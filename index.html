@@ -1,111 +1,129 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>CineZen</title>
-  <meta name="description" content="CineZen movie discovery"/>
-  <link rel="stylesheet" href="/style.css"/>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b12">
+<title>CineZen</title>
+<meta name="description" content="Discover movies and see what is available on CineZen.">
+<link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body id="home">
 <header class="topbar">
-  <a class="brand" href="/">CineZen</a>
-  <nav>
+  <a class="brand" href="#home"><span class="logo">CZ</span>CineZen</a>
+  <nav class="desktop-nav">
+    <a href="#available">Now Available</a>
+    <a href="#browse">Browse</a>
+    <a href="#favorites">Favorites</a>
     <a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Channel</a>
-    <a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a>
   </nav>
+  <a class="btn small" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a>
 </header>
 
 <main>
-  <section class="hero">
-    <div>
-      <span class="kicker">MOVIES • TMDB POWERED</span>
-      <h1>Discover movies.<br/>Continue on Telegram.</h1>
-      <p>Search live movie data, ratings, posters, genres, trailers and details.</p>
-      <div class="hero-actions">
-        <a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">🤖 SRSMOVIEBOT</a>
-        <a class="btn secondary" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">📢 CineZenHQ</a>
-      </div>
+<section class="hero">
+  <div class="hero-copy">
+    <span class="kicker">CINEZEN MOVIE DISCOVERY</span>
+    <h1>Find it. Check it.<br>Watch when available.</h1>
+    <p>Search movie details, ratings and trailers. Titles released by CineZen appear separately under Now Available.</p>
+    <div class="hero-actions">
+      <a class="btn" href="#available">🔥 Now Available</a>
+      <a class="btn secondary" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">📢 Join Channel</a>
     </div>
-  </section>
-
-  <section class="toolbar">
-    <input id="search" type="search" placeholder="Search any movie..." />
-    <select id="genre"><option value="">All genres</option></select>
-    <select id="language">
-      <option value="">All languages</option>
-      <option value="ml">Malayalam</option>
-      <option value="ta">Tamil</option>
-      <option value="hi">Hindi</option>
-      <option value="en">English</option>
-      <option value="te">Telugu</option>
-      <option value="kn">Kannada</option>
-      <option value="ko">Korean</option>
-      <option value="ja">Japanese</option>
-    </select>
-    <select id="sort">
-      <option value="popularity.desc">Popular</option>
-      <option value="vote_average.desc">Top Rated</option>
-      <option value="primary_release_date.desc">Latest</option>
-      <option value="revenue.desc">Revenue</option>
-    </select>
-  </section>
-
-  
-<section class="section latest-section">
-  <div class="section-head">
-    <div>
-      <span class="kicker">JUST RELEASED</span>
-      <h2>Now Available on CineZen</h2>
-    </div>
-    <span id="latestStatus"></span>
   </div>
-  <div id="latestGrid" class="grid latest-grid"></div>
-  <div id="latestEmpty" class="empty hidden">No movies published yet.</div>
 </section>
 
-<section class="section">
-    <div class="section-head">
-      <div>
-        <span class="kicker">LIVE CATALOG</span>
-        <h2 id="heading">Popular Movies</h2>
-      </div>
-      <span id="status"></span>
-    </div>
-    <div id="grid" class="grid"></div>
-    <div id="empty" class="empty hidden">No movies found.</div>
-    <button id="loadMore" class="load-more">Load More</button>
-  </section>
+<section class="search-shell" id="searchSection">
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Search movies..." autocomplete="off">
+    <div id="suggestions" class="suggestions hidden"></div>
+  </div>
+  <select id="genre"><option value="">All genres</option></select>
+  <select id="language">
+    <option value="">All languages</option><option value="ml">Malayalam</option>
+    <option value="ta">Tamil</option><option value="hi">Hindi</option>
+    <option value="en">English</option><option value="te">Telugu</option>
+    <option value="kn">Kannada</option><option value="ko">Korean</option>
+    <option value="ja">Japanese</option>
+  </select>
+</section>
+
+<section class="quick-tabs">
+  <button class="quick active" data-feed="trending">🔥 Trending</button>
+  <button class="quick" data-feed="upcoming">🗓 Upcoming</button>
+  <button class="quick" data-feed="toprated">⭐ Top Rated</button>
+  <button class="quick" data-feed="discover">🎬 Popular</button>
+</section>
+
+<section id="available" class="section">
+  <div class="section-head">
+    <div><span class="kicker">CINEZEN RELEASES</span><h2>Now Available</h2></div>
+    <span id="availableStatus" class="muted"></span>
+  </div>
+  <div id="availableGrid" class="grid"></div>
+  <div id="availableEmpty" class="empty hidden">No CineZen releases published yet.</div>
+</section>
+
+<section id="browse" class="section">
+  <div class="section-head">
+    <div><span class="kicker">DISCOVER</span><h2 id="feedTitle">Trending Movies</h2></div>
+    <span id="status" class="muted"></span>
+  </div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty hidden">No movies found.</div>
+  <button id="loadMore" class="load-more">Load More</button>
+</section>
+
+<section id="favorites" class="section compact">
+  <div class="section-head"><div><span class="kicker">SAVED</span><h2>My Favorites</h2></div><span id="favCount" class="muted"></span></div>
+  <div id="favoritesGrid" class="grid"></div>
+  <div id="favoritesEmpty" class="empty">Tap ♡ on a movie to save it here.</div>
+</section>
+
+<section id="recent" class="section compact">
+  <div class="section-head"><div><span class="kicker">HISTORY</span><h2>Recently Viewed</h2></div></div>
+  <div id="recentGrid" class="grid"></div>
+  <div id="recentEmpty" class="empty">Movies you open will appear here.</div>
+</section>
+
+<section class="info">
+  <div><span class="kicker">ABOUT</span><h2>About CineZen</h2><p>CineZen is a movie discovery companion connected to CineZenHQ and SRSMOVIEBOT.</p></div>
+  <div><span class="kicker">CONTACT</span><h2>Contact</h2><p>Use the Telegram channel or bot for updates and support.</p></div>
+</section>
 </main>
 
+<footer>Movie metadata powered by TMDB. CineZen availability is managed separately.</footer>
+
+<nav class="bottom-nav">
+  <a href="#home">⌂<span>Home</span></a>
+  <button id="bottomSearch">⌕<span>Search</span></button>
+  <a href="#available">▶<span>Available</span></a>
+  <a href="#favorites">♡<span>Favorites</span></a>
+</nav>
+
 <div id="modal" class="modal hidden" aria-hidden="true">
-  <div class="backdrop" data-close></div>
+  <div class="modal-backdrop" data-close></div>
   <article class="modal-card">
-    <button class="close" data-close>×</button>
-    <img id="modalPoster" alt="">
+    <button class="modal-close" data-close aria-label="Close">×</button>
+    <div class="modal-poster-wrap"><img id="modalPoster" class="modal-poster" alt=""></div>
     <div class="modal-body">
       <span id="modalMeta" class="kicker"></span>
       <h2 id="modalTitle"></h2>
-      <div class="rating-row">
-        <span id="tmdbRating"></span>
-        <a id="imdbLink" target="_blank" rel="noopener" class="imdb hidden">IMDb</a>
-      </div>
+      <div class="rating-row"><span id="tmdbRating"></span><a id="imdbLink" class="imdb hidden" target="_blank" rel="noopener">IMDb</a></div>
       <p id="modalOverview"></p>
+      <div id="cast" class="cast"></div>
       <div id="tags" class="tags"></div>
-      <div class="hero-actions">
-        <a id="getMovie" class="btn" target="_blank" rel="noopener">Get Movie on Telegram</a>
-        <button id="requestMovie" class="btn secondary hidden" type="button">Request This Movie</button>
+      <div class="action-grid">
+        <a id="getMovie" class="btn hidden" target="_blank" rel="noopener">Get Movie on Telegram</a>
+        <button id="requestMovie" class="btn secondary hidden">Request This Movie</button>
+        <button id="favoriteBtn" class="btn secondary">♡ Add Favorite</button>
+        <button id="shareBtn" class="btn secondary">↗ Share</button>
         <a id="trailer" class="btn secondary hidden" target="_blank" rel="noopener">Watch Trailer</a>
       </div>
     </div>
   </article>
 </div>
 
-<footer>
-  <span>© CineZen</span>
-  <span>Movie metadata powered by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.</span>
-</footer>
-
-<script src="/script.js"></script>
+<script src="/script.js?v=pro1"></script>
 </body>
 </html>
