@@ -56,7 +56,7 @@ function setFavoriteButton(m){const id=Number(m.id),exists=favorites.some(x=>Num
 function renderFavorites(){$('favCount').textContent=favorites.length+' saved';$('favoritesEmpty').classList.toggle('hidden',favorites.length>0);renderGrid($('favoritesGrid'),favorites,false)}
 async function shareMovie(m){const text=`${m.title||'Movie'} (${yearOf(m)}) — CineZen`;try{if(navigator.share)await navigator.share({title:m.title,text,url:location.href});else{await navigator.clipboard.writeText(text);alert('Movie info copied')}}catch{}}
 function hideSuggestions(){$('suggestions').classList.add('hidden');$('suggestions').innerHTML='';document.body.classList.remove('search-suggestions-open')}
-function renderSuggestions(list){const a=list.slice(0,7);if(!a.length)return hideSuggestions();$('suggestions').innerHTML=a.map((m,i)=>`<div class="suggestion" data-i="${i}"><img src="${normalizePoster(m.poster_path)}" alt=""><div><strong>${escapeHtml(m.title||'Untitled')}</strong><small>${yearOf(m)} • ${(m.original_language||'').toUpperCase()}</small></div></div>`).join('');$('suggestions').classList.remove('hidden');document.body.classList.add('search-suggestions-open');$('suggestions').querySelectorAll('.suggestion').forEach(x=>x.onclick=()=>{const m=a[Number(x.dataset.i)];$('search').value=m.title||'';hideSuggestions();openMovie(m.id)})}
+function renderSuggestions(list){const a=list.slice(0,20);if(!a.length)return hideSuggestions();$('suggestions').innerHTML=a.map((m,i)=>`<div class="suggestion" data-i="${i}"><img src="${normalizePoster(m.poster_path)}" alt=""><div><strong>${escapeHtml(m.title||'Untitled')}</strong><small>${yearOf(m)} • ${(m.original_language||'').toUpperCase()}</small></div></div>`).join('');$('suggestions').classList.remove('hidden');document.body.classList.add('search-suggestions-open');$('suggestions').querySelectorAll('.suggestion').forEach(x=>x.onclick=()=>{const m=a[Number(x.dataset.i)];$('search').value=m.title||'';hideSuggestions();openMovie(m.id)})}
 $('search').addEventListener('input',()=>{clearTimeout(suggestTimer);const q=$('search').value.trim();if(q.length<2){hideSuggestions();if(!q)loadFeed(true);return}suggestTimer=setTimeout(async()=>{try{const d=await api({action:'search',q,page:1});renderSuggestions(d.results||[])}catch{hideSuggestions()}},280)});
 $('search').addEventListener('keydown',e=>{if(e.key==='Enter'){hideSuggestions();loadFeed(true)}});
 document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))hideSuggestions()});
@@ -212,3 +212,32 @@ suggestionsBox?.addEventListener('wheel',e=>{
 suggestionsBox?.addEventListener('touchmove',e=>{
   e.stopPropagation();
 },{passive:true});
+
+function lockSuggestionScroll(){
+  const box=document.getElementById('suggestions');
+  if(!box) return;
+
+  let startY=0;
+
+  box.addEventListener('touchstart',e=>{
+    if(e.touches && e.touches.length){
+      startY=e.touches[0].clientY;
+    }
+  },{passive:true});
+
+  box.addEventListener('touchmove',e=>{
+    if(!e.touches || !e.touches.length) return;
+    const currentY=e.touches[0].clientY;
+    const movingDown=currentY>startY;
+    const movingUp=currentY<startY;
+
+    const atTop=box.scrollTop<=0;
+    const atBottom=Math.ceil(box.scrollTop+box.clientHeight)>=box.scrollHeight;
+
+    // Keep gesture inside the suggestion list instead of handing it to page scroll.
+    if((atTop && movingDown) || (atBottom && movingUp)){
+      e.preventDefault();
+    }
+  },{passive:false});
+}
+lockSuggestionScroll();

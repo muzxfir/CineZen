@@ -202,3 +202,32 @@ body.search-suggestions-open{
     max-height:calc(100dvh - 250px)!important;
   }
 }
+
+/* ===== Full scrollable search suggestions ===== */
+.suggestions{
+  z-index:150!important;
+  max-height:min(62dvh,620px)!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  overscroll-behavior-y:contain!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-y!important;
+  scrollbar-width:thin;
+}
+.suggestions .suggestion{
+  min-height:84px;
+  flex-shrink:0;
+}
+body.search-suggestions-open .bottom-nav{
+  opacity:0!important;
+  pointer-events:none!important;
+  transform:translateY(120%)!important;
+}
+.bottom-nav{
+  transition:transform .22s ease,opacity .22s ease;
+}
+@media(max-width:760px){
+  .suggestions{
+    max-height:calc(100dvh - 230px)!important;
+  }
+}
