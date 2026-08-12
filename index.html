@@ -18,14 +18,16 @@
     </div>
     <button id="menuClose" class="menu-close" aria-label="Close menu">✕</button>
   </div>
-  <nav class="menu-nav">
-    <a href="#top" data-menu-link>🏠 Home</a>
-    <a href="#browse" data-menu-link>🎬 Browse Movies</a>
-    <a href="#available" data-menu-link>🔥 Now Available</a>
-    <button id="menuRequest" type="button">📩 Request Movie</button>
-    <a href="#about" data-menu-link>ℹ️ About CineZen</a>
-    <a href="#contact" data-menu-link>✉️ Contact Us</a>
-  </nav>
+  
+<nav class="menu-nav">
+  <button type="button" data-target="top">🏠 Home</button>
+  <button type="button" data-target="browse">🎬 Browse Movies</button>
+  <button type="button" data-target="available">🔥 Now Available</button>
+  <button type="button" data-target="browse" data-focus-search="1">📩 Request Movie</button>
+  <button type="button" data-target="about">ℹ️ About CineZen</button>
+  <button type="button" data-target="contact">✉️ Contact Us</button>
+</nav>
+
 </aside>
 
 <header class="topbar">
