@@ -45,3 +45,10 @@ Example:
 `https://t.me/SRSMOVIEBOT?start=search_Jawan_2023`
 
 The uploaded Auto-Filter-v7 bot source already contains a `search_` deep-link handler that converts this payload into a normal auto-filter search.
+
+
+## Direct movie delivery
+Get Movie now opens:
+`https://t.me/SRSMOVIEBOT?start=direct_<TITLE>_<YEAR>`
+
+The matching Auto-Filter bot ZIP in this package set handles that payload and directly sends matching indexed files instead of showing a search-result list.

@@ -81,7 +81,7 @@ async function openMovie(id){
     el('tags').innerHTML=(d.genres||[]).map(g=>`<span>${escapeHtml(g.name)}</span>`).join('');
     const year=(d.release_date||'').slice(0,4);
     const rawQuery=`${d.title||''}${year?' '+year:''}`.trim();
-    const startPayload='search_'+rawQuery
+    const startPayload='direct_'+rawQuery
       .normalize('NFKD')
       .replace(/[^a-zA-Z0-9 ]/g,'')
       .trim()
