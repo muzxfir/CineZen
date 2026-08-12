@@ -1,6 +1,6 @@
 const BOT='https://t.me/SRSMOVIEBOT';
 
-const FIREBASE_API_KEY="AIzaSyA9xYUXl1HV7kpjWfIGWQiIPJh5KJX-Ir0";
+const FIREBASE_API_KEY="AIzaSyA9xYUXl1HV7kpjWfIGWQiIPJh5KJX-IrQ";
 const FIREBASE_PROJECT_ID="cinezen-9088f";
 const FIRESTORE_BASE=`https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT_ID}/databases/(default)/documents`;
 let availableMovieIds=new Set();
