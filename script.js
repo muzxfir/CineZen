@@ -1,3 +1,50 @@
+
+function openMenu(){
+  const drawer=document.getElementById('menuDrawer');
+  const overlay=document.getElementById('menuOverlay');
+  drawer.classList.add('open');
+  drawer.setAttribute('aria-hidden','false');
+  overlay.classList.remove('hidden');
+  requestAnimationFrame(()=>overlay.classList.add('show'));
+  document.body.style.overflow='hidden';
+}
+function closeMenu(){
+  const drawer=document.getElementById('menuDrawer');
+  const overlay=document.getElementById('menuOverlay');
+  drawer.classList.remove('open');
+  drawer.setAttribute('aria-hidden','true');
+  overlay.classList.remove('show');
+  setTimeout(()=>overlay.classList.add('hidden'),280);
+  document.body.style.overflow='';
+}
+document.getElementById('menuBtn')?.addEventListener('click',openMenu);
+document.getElementById('menuClose')?.addEventListener('click',closeMenu);
+document.getElementById('menuOverlay')?.addEventListener('click',closeMenu);
+document.querySelectorAll('[data-menu-link]').forEach(x=>x.addEventListener('click',closeMenu));
+document.getElementById('menuRequest')?.addEventListener('click',()=>{
+  closeMenu();
+  document.getElementById('search')?.focus();
+  document.getElementById('browse')?.scrollIntoView({behavior:'smooth'});
+});
+
+const revealObserver=new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+},{threshold:.12});
+function observeReveals(){
+  document.querySelectorAll('.card,.info-section').forEach(el=>{
+    if(!el.dataset.revealBound){
+      el.dataset.revealBound='1';
+      el.classList.add('reveal');
+      revealObserver.observe(el);
+    }
+  });
+}
+
 const BOT='https://t.me/SRSMOVIEBOT';
 
 const FIREBASE_API_KEY="AIzaSyA9xYUXl1HV7kpjWfIGWQiIPJh5KJX-IrQ";
@@ -65,7 +112,7 @@ async function loadLatestMovies(){
         </div>
       </article>`;
     }).join('');
-    latestGrid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openMovie(c.dataset.id));
+    latestGrid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openMovie(c.dataset.id)); observeReveals();
   }catch(e){
     status.textContent=e.message;
   }
@@ -97,7 +144,7 @@ function renderCards(items, append=false){
       </div>
     </article>`
   }).join('');
-  grid.insertAdjacentHTML('beforeend',html);
+  grid.insertAdjacentHTML('beforeend',html); observeReveals();
   grid.querySelectorAll('.card').forEach(c=>{if(!c.dataset.bound){c.dataset.bound='1';c.onclick=()=>openMovie(c.dataset.id)}});
 }
 
@@ -127,6 +174,30 @@ async function loadMovies(reset=false){
   }finally{loading=false}
 }
 
+
+async function requestMovieToAdmin(movie){
+  const year=(movie.release_date||'').slice(0,4);
+  const fields={
+    tmdbId:{integerValue:String(movie.id)},
+    title:{stringValue:movie.title||movie.original_title||''},
+    year:{stringValue:year},
+    releaseDate:{stringValue:movie.release_date||''},
+    posterPath:{stringValue:movie.poster_path||''},
+    language:{stringValue:movie.original_language||''},
+    status:{stringValue:'pending'},
+    requestedAt:{timestampValue:new Date().toISOString()}
+  };
+  const url=`${FIRESTORE_BASE}/movie_requests/${encodeURIComponent(String(movie.id))}?key=${FIREBASE_API_KEY}`;
+  const r=await fetch(url,{
+    method:'PATCH',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({fields})
+  });
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(d.error?.message||'Request failed');
+  return d;
+}
+
 async function openMovie(id){
   try{
     const d=await api({action:'details',id});
@@ -147,15 +218,32 @@ async function openMovie(id){
     if(availableMovieIds.has(Number(d.id))){
       el('getMovie').href=BOT+'?start='+startPayload;
       el('getMovie').textContent='Get Movie on Telegram';
-      el('getMovie').classList.remove('secondary');
+      el('getMovie').classList.remove('secondary','hidden');
       el('getMovie').style.pointerEvents='';
       el('getMovie').removeAttribute('aria-disabled');
+      el('requestMovie').classList.add('hidden');
+      el('requestMovie').onclick=null;
     }else{
       el('getMovie').removeAttribute('href');
-      el('getMovie').textContent='Not Available Yet';
-      el('getMovie').classList.add('secondary');
+      el('getMovie').classList.add('hidden');
       el('getMovie').style.pointerEvents='none';
       el('getMovie').setAttribute('aria-disabled','true');
+      el('requestMovie').classList.remove('hidden');
+      el('requestMovie').textContent='Request This Movie';
+      el('requestMovie').disabled=false;
+      el('requestMovie').onclick=async()=>{
+        const btn=el('requestMovie');
+        btn.disabled=true;
+        btn.textContent='Sending Request...';
+        try{
+          await requestMovieToAdmin(d);
+          btn.textContent='Request Sent ✓';
+        }catch(e){
+          btn.disabled=false;
+          btn.textContent='Request This Movie';
+          alert(e.message);
+        }
+      };
     }
     const imdb=el('imdbLink');
     if(d.imdb_id){imdb.href='https://www.imdb.com/title/'+d.imdb_id+'/';imdb.classList.remove('hidden')}else imdb.classList.add('hidden');
@@ -172,4 +260,4 @@ search.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTi
 [genre,language,sort].forEach(x=>x.addEventListener('change',()=>{if(!search.value.trim())loadMovies(true)}));
 el('loadMore').onclick=()=>{if(page<totalPages){page++;loadMovies(false)}};
 function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-loadLatestMovies();loadGenres();loadMovies(true);
+observeReveals();loadLatestMovies();loadGenres();loadMovies(true);

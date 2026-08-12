@@ -7,12 +7,32 @@
   <meta name="description" content="CineZen movie discovery"/>
   <link rel="stylesheet" href="/style.css"/>
 </head>
-<body>
+<body id="top">
+
+<div id="menuOverlay" class="menu-overlay hidden"></div>
+<aside id="menuDrawer" class="menu-drawer" aria-hidden="true">
+  <div class="menu-top">
+    <div>
+      <div class="menu-brand">CineZen</div>
+      <div class="menu-sub">Movies • Updates • Telegram</div>
+    </div>
+    <button id="menuClose" class="menu-close" aria-label="Close menu">✕</button>
+  </div>
+  <nav class="menu-nav">
+    <a href="#top" data-menu-link>🏠 Home</a>
+    <a href="#browse" data-menu-link>🎬 Browse Movies</a>
+    <a href="#available" data-menu-link>🔥 Now Available</a>
+    <button id="menuRequest" type="button">📩 Request Movie</button>
+    <a href="#about" data-menu-link>ℹ️ About CineZen</a>
+    <a href="#contact" data-menu-link>✉️ Contact Us</a>
+  </nav>
+</aside>
+
 <header class="topbar">
   <a class="brand" href="/">CineZen</a>
   <nav>
     <a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">Channel</a>
-    <a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a>
+    <div class="header-actions"><button id="menuBtn" class="menu-btn" aria-label="Open menu">☰</button><a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a></div>
   </nav>
 </header>
 
@@ -52,7 +72,7 @@
   </section>
 
   
-<section class="section latest-section">
+<section id="available" class="section latest-section">
   <div class="section-head">
     <div>
       <span class="kicker">JUST RELEASED</span>
@@ -64,7 +84,7 @@
   <div id="latestEmpty" class="empty hidden">No movies published yet.</div>
 </section>
 
-<section class="section">
+<section id="browse" class="section">
     <div class="section-head">
       <div>
         <span class="kicker">LIVE CATALOG</span>
@@ -76,6 +96,23 @@
     <div id="empty" class="empty hidden">No movies found.</div>
     <button id="loadMore" class="load-more">Load More</button>
   </section>
+
+<section id="about" class="info-section reveal">
+  <p class="kicker">ABOUT</p>
+  <h2>About CineZen</h2>
+  <p>CineZen helps you discover movies, check ratings, trailers and details, and see which titles are currently available through the CineZen Telegram bot.</p>
+</section>
+
+<section id="contact" class="info-section reveal">
+  <p class="kicker">CONTACT</p>
+  <h2>Contact CineZen</h2>
+  <p>For movie requests and updates, use the request option on CineZen or contact us through Telegram.</p>
+  <div class="contact-actions">
+    <a class="btn" href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open Bot</a>
+    <a class="btn secondary" href="https://t.me/CineZenHQ" target="_blank" rel="noopener">CineZenHQ</a>
+  </div>
+</section>
+
 </main>
 
 <div id="modal" class="modal hidden" aria-hidden="true">
@@ -94,6 +131,7 @@
       <div id="tags" class="tags"></div>
       <div class="hero-actions">
         <a id="getMovie" class="btn" target="_blank" rel="noopener">Get Movie on Telegram</a>
+        <button id="requestMovie" class="btn secondary hidden" type="button">Request This Movie</button>
         <a id="trailer" class="btn secondary hidden" target="_blank" rel="noopener">Watch Trailer</a>
       </div>
     </div>
