@@ -66,3 +66,35 @@ document.querySelectorAll('.quick').forEach(b=>b.onclick=()=>{currentFeed=b.data
 $('loadMore').onclick=()=>{if(page<totalPages){page++;loadFeed(false)}};
 $('bottomSearch').onclick=()=>{document.getElementById('searchSection').scrollIntoView({behavior:'smooth'});setTimeout(()=>$('search').focus(),350)};
 loadGenres();loadAvailable();renderFavorites();renderRecent();loadFeed(true);
+
+
+let lastScrollY = window.scrollY;
+let searchBarHidden = false;
+
+function updateSearchBarOnScroll(){
+  const shell = document.querySelector('.search-shell');
+  if(!shell) return;
+
+  const y = window.scrollY;
+  const delta = y - lastScrollY;
+
+  // Always show near top
+  if(y < 140){
+    shell.classList.remove('search-hidden');
+    searchBarHidden = false;
+  }
+  // Scroll down -> hide
+  else if(delta > 8 && !searchBarHidden){
+    shell.classList.add('search-hidden');
+    searchBarHidden = true;
+  }
+  // Scroll up -> show
+  else if(delta < -8 && searchBarHidden){
+    shell.classList.remove('search-hidden');
+    searchBarHidden = false;
+  }
+
+  lastScrollY = y;
+}
+
+window.addEventListener('scroll', updateSearchBarOnScroll, {passive:true});
