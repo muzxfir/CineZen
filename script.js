@@ -98,3 +98,14 @@ function updateSearchBarOnScroll(){
 }
 
 window.addEventListener('scroll', updateSearchBarOnScroll, {passive:true});
+
+document.getElementById('footerShare')?.addEventListener('click',async()=>{
+  try{
+    if(navigator.share){
+      await navigator.share({title:'CineZen',text:'Discover movies on CineZen',url:location.href});
+    }else{
+      await navigator.clipboard.writeText(location.href);
+      alert('CineZen link copied');
+    }
+  }catch{}
+});
