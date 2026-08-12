@@ -36,7 +36,23 @@
 <section class="search-shell" id="searchSection">
   <div class="search-wrap">
     <input id="search" type="search" placeholder="Search movies..." autocomplete="off">
-    <div id="suggestions" class="suggestions hidden"></div>
+    <div id="suggestions" class="suggestions hidden">
+<select id="countryFilter" aria-label="Country">
+  <option value="">All countries</option>
+  <option value="IN">India</option><option value="US">United States</option>
+  <option value="GB">United Kingdom</option><option value="KR">South Korea</option>
+  <option value="JP">Japan</option><option value="FR">France</option>
+  <option value="DE">Germany</option><option value="ES">Spain</option>
+  <option value="IT">Italy</option><option value="CN">China</option>
+  <option value="AE">UAE</option>
+</select>
+<select id="yearFilter" aria-label="Year"><option value="">All years</option></select>
+<select id="typeFilter" aria-label="Type">
+  <option value="movie">Movies</option>
+  <option value="tv">TV Series</option>
+  <option value="multi">Movies + TV</option>
+</select>
+</div>
   </div>
   <select id="genre"><option value="">All genres</option></select>
   <select id="language">
@@ -183,6 +199,6 @@
   </div>
 </div>
 
-<script src="/script.js?v=suggestfullscroll5"></script>
+<script src="/script.js?v=worldwide-imdb1"></script>
 </body>
 </html>

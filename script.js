@@ -241,3 +241,38 @@ function lockSuggestionScroll(){
   },{passive:false});
 }
 lockSuggestionScroll();
+
+
+/* ===== CineZen Worldwide + IMDb integration ===== */
+async function czExternalIds(type,id){
+  try{
+    const endpoint = type === 'tv'
+      ? `${TMDB}/tv/${id}/external_ids?api_key=${TMDB_KEY}`
+      : `${TMDB}/movie/${id}/external_ids?api_key=${TMDB_KEY}`;
+    const r=await fetch(endpoint);
+    return r.ok ? await r.json() : {};
+  }catch(e){ return {}; }
+}
+function czOpenIMDb(imdbId){
+  if(imdbId) window.open(`https://www.imdb.com/title/${encodeURIComponent(imdbId)}/`,'_blank','noopener');
+}
+async function czIMDbButton(type,id){
+  const x=await czExternalIds(type,id);
+  if(!x.imdb_id) return null;
+  const b=document.createElement('button');
+  b.className='cz-imdb-btn';
+  b.type='button';
+  b.textContent='IMDb';
+  b.onclick=()=>czOpenIMDb(x.imdb_id);
+  return b;
+}
+
+(function(){
+ const y=document.getElementById('yearFilter');
+ if(y && y.options.length===1){
+   const now=new Date().getFullYear()+2;
+   for(let n=now;n>=1900;n--){
+     const o=document.createElement('option');o.value=n;o.textContent=n;y.appendChild(o);
+   }
+ }
+})();
