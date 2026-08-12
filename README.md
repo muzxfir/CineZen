@@ -36,3 +36,12 @@ Example:
 `https://t.me/SRSMOVIEBOT?start=movie_550`
 
 The bot must handle the `/start movie_<TMDB_ID>` payload to automatically process that selected movie.
+
+
+## Auto request behavior
+The Get Movie button now sends the selected movie title + release year to SRSMOVIEBOT.
+
+Example:
+`https://t.me/SRSMOVIEBOT?start=search_Jawan_2023`
+
+The uploaded Auto-Filter-v7 bot source already contains a `search_` deep-link handler that converts this payload into a normal auto-filter search.

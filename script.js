@@ -79,7 +79,15 @@ async function openMovie(id){
     el('tmdbRating').textContent=`⭐ TMDB ${Number(d.vote_average||0).toFixed(1)}/10`;
     el('modalOverview').textContent=d.overview||'No overview available.';
     el('tags').innerHTML=(d.genres||[]).map(g=>`<span>${escapeHtml(g.name)}</span>`).join('');
-    el('getMovie').href=BOT+'?start='+encodeURIComponent('movie_'+d.id);
+    const year=(d.release_date||'').slice(0,4);
+    const rawQuery=`${d.title||''}${year?' '+year:''}`.trim();
+    const startPayload='search_'+rawQuery
+      .normalize('NFKD')
+      .replace(/[^a-zA-Z0-9 ]/g,'')
+      .trim()
+      .replace(/\s+/g,'_')
+      .slice(0,64);
+    el('getMovie').href=BOT+'?start='+startPayload;
     const imdb=el('imdbLink');
     if(d.imdb_id){imdb.href='https://www.imdb.com/title/'+d.imdb_id+'/';imdb.classList.remove('hidden')}else imdb.classList.add('hidden');
     const trailer=(d.videos?.results||[]).find(v=>v.site==='YouTube'&&v.type==='Trailer') || (d.videos?.results||[]).find(v=>v.site==='YouTube');
