@@ -135,7 +135,7 @@ async function requestMovieToAdmin(movie){
     title:{stringValue:movie.title||movie.original_title||''},
     year:{stringValue:year},
     releaseDate:{stringValue:movie.release_date||''},
-    posterPath:{stringValue:movie.poster_path||''},
+    posterPath:{stringValue:movie.poster_path?IMG+movie.poster_path:''},
     language:{stringValue:movie.original_language||''},
     status:{stringValue:'pending'},
     requestedAt:{timestampValue:new Date().toISOString()}
