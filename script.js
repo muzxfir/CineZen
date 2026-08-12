@@ -1,53 +1,3 @@
-
-function openMenu(){
-  const menu=document.getElementById('czMenu');
-  if(!menu)return;
-  menu.classList.remove('hidden');
-  menu.setAttribute('aria-hidden','false');
-  document.body.style.overflow='hidden';
-}
-function closeMenu(){
-  const menu=document.getElementById('czMenu');
-  if(!menu)return;
-  menu.classList.add('hidden');
-  menu.setAttribute('aria-hidden','true');
-  document.body.style.overflow='';
-}
-function goToSection(target,focusSearch=false){
-  closeMenu();
-  const section=document.getElementById(target);
-  if(section){
-    setTimeout(()=>section.scrollIntoView({behavior:'smooth',block:'start'}),40);
-  }
-  if(focusSearch){
-    setTimeout(()=>document.getElementById('search')?.focus({preventScroll:true}),500);
-  }
-}
-document.getElementById('menuBtn')?.addEventListener('click',openMenu);
-document.getElementById('menuClose')?.addEventListener('click',closeMenu);
-document.getElementById('czMenuBackdrop')?.addEventListener('click',closeMenu);
-document.querySelectorAll('.cz-menu-links [data-target]').forEach(btn=>{
-  btn.addEventListener('click',()=>goToSection(btn.dataset.target,btn.dataset.focusSearch==='1'));
-});
-
-const revealObserver=new IntersectionObserver(entries=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
-    }
-  });
-},{threshold:.12});
-function observeReveals(){
-  document.querySelectorAll('.card,.info-section').forEach(el=>{
-    if(!el.dataset.revealBound){
-      el.dataset.revealBound='1';
-      el.classList.add('reveal');
-      revealObserver.observe(el);
-    }
-  });
-}
-
 const BOT='https://t.me/SRSMOVIEBOT';
 
 const FIREBASE_API_KEY="AIzaSyA9xYUXl1HV7kpjWfIGWQiIPJh5KJX-IrQ";
@@ -115,7 +65,7 @@ async function loadLatestMovies(){
         </div>
       </article>`;
     }).join('');
-    latestGrid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openMovie(c.dataset.id)); observeReveals();
+    latestGrid.querySelectorAll('.card').forEach(c=>c.onclick=()=>openMovie(c.dataset.id));
   }catch(e){
     status.textContent=e.message;
   }
@@ -147,7 +97,7 @@ function renderCards(items, append=false){
       </div>
     </article>`
   }).join('');
-  grid.insertAdjacentHTML('beforeend',html); observeReveals();
+  grid.insertAdjacentHTML('beforeend',html);
   grid.querySelectorAll('.card').forEach(c=>{if(!c.dataset.bound){c.dataset.bound='1';c.onclick=()=>openMovie(c.dataset.id)}});
 }
 
@@ -202,7 +152,6 @@ async function requestMovieToAdmin(movie){
 }
 
 async function openMovie(id){
-  closeMenu();
   try{
     const d=await api({action:'details',id});
     el('modalPoster').src=d.poster_path?IMG+d.poster_path:placeholder;
@@ -254,18 +203,14 @@ async function openMovie(id){
     const trailer=(d.videos?.results||[]).find(v=>v.site==='YouTube'&&v.type==='Trailer') || (d.videos?.results||[]).find(v=>v.site==='YouTube');
     const tr=el('trailer');
     if(trailer){tr.href='https://www.youtube.com/watch?v='+trailer.key;tr.classList.remove('hidden')}else tr.classList.add('hidden');
-    el('modal').classList.remove('hidden'); el('modal').setAttribute('aria-hidden','false'); document.body.style.overflow='hidden';
+    el('modal').classList.remove('hidden'); document.body.style.overflow='hidden';
   }catch(e){alert(e.message)}
 }
-function closeModal(){
-  el('modal').classList.add('hidden');
-  el('modal').setAttribute('aria-hidden','true');
-  document.body.style.overflow='';
-}
+function closeModal(){el('modal').classList.add('hidden');document.body.style.overflow=''}
 document.querySelectorAll('[data-close]').forEach(x=>x.onclick=closeModal);
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
 search.addEventListener('input',()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadMovies(true),450)});
 [genre,language,sort].forEach(x=>x.addEventListener('change',()=>{if(!search.value.trim())loadMovies(true)}));
 el('loadMore').onclick=()=>{if(page<totalPages){page++;loadMovies(false)}};
 function escapeHtml(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-observeReveals();loadLatestMovies();loadGenres();loadMovies(true);
+loadLatestMovies();loadGenres();loadMovies(true);
