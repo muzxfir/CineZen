@@ -109,3 +109,77 @@ document.getElementById('footerShare')?.addEventListener('click',async()=>{
     }
   }catch{}
 });
+
+const cinezenLegalPages = {
+  disclaimer: {
+    title: "Disclaimer",
+    body: `<p>CineZen is a movie discovery and information service. Movie titles, posters, ratings, cast details, release information and related metadata may be supplied by third-party data providers such as TMDB.</p>
+    <h3>No file hosting</h3><p>CineZen does not host movie or television video files on this website. Availability information or external service links are provided for navigation and informational purposes.</p>
+    <h3>Accuracy</h3><p>We try to keep information useful and current, but we cannot guarantee that every title, date, rating, poster, link or availability status is complete or error-free.</p>
+    <h3>Third-party services</h3><p>External websites, Telegram services and other third-party destinations have their own terms and privacy practices. CineZen is not responsible for content or actions on third-party services.</p>`
+  },
+  faq: {
+    title: "Frequently Asked Questions",
+    body: `<h3>What is CineZen?</h3><p>CineZen helps users discover movies, view movie information, save favorites and request titles.</p>
+    <h3>Does CineZen host movies?</h3><p>No. CineZen does not host movie video files on this website.</p>
+    <h3>How do movie requests work?</h3><p>Use the Request Movie feature. A request can be sent to the CineZen admin for review. A request does not guarantee that a title will become available.</p>
+    <h3>Where are my favorites stored?</h3><p>Favorites and recently viewed information may be stored locally in your browser unless a feature specifically states otherwise.</p>
+    <h3>Why can movie information change?</h3><p>Movie metadata can be updated by the third-party data source used by CineZen.</p>`
+  },
+  privacy: {
+    title: "Privacy Policy",
+    body: `<p>This policy explains the basic data handling of the CineZen website.</p>
+    <h3>Information you provide</h3><p>When you submit a movie request or contact CineZen, the information you enter may be processed to handle that request or message.</p>
+    <h3>Browser storage</h3><p>CineZen may use local browser storage for features such as favorites and recently viewed movies.</p>
+    <h3>Technical data</h3><p>Hosting providers and third-party services may process ordinary technical information such as IP address, browser/device information and request logs as part of operating their services.</p>
+    <h3>Third parties</h3><p>CineZen can use third-party services for hosting, movie metadata and external links. Their own privacy policies apply to data they process.</p>
+    <h3>Changes</h3><p>This policy may be updated as CineZen features or service providers change.</p>`
+  },
+  dmca: {
+    title: "DMCA / Copyright",
+    body: `<p>CineZen respects intellectual-property rights and does not host movie video files on this website.</p>
+    <h3>Copyright concerns</h3><p>If you are a copyright owner or an authorized representative and believe content or a link displayed through CineZen infringes your rights, contact CineZen with enough information to identify the material.</p>
+    <h3>Please include</h3><ul><li>Your name and contact information.</li><li>Identification of the copyrighted work.</li><li>The exact CineZen page, title or link involved.</li><li>A description of the issue and the action requested.</li><li>A statement that the information supplied is accurate and that you are authorized to act.</li></ul>
+    <p>Valid notices can be reviewed and appropriate action taken where applicable.</p>`
+  },
+  terms: {
+    title: "Terms & Conditions",
+    body: `<p>By using CineZen, you agree to use the service lawfully and responsibly.</p>
+    <h3>Service purpose</h3><p>CineZen provides movie discovery, metadata, favorites, requests and links to related services. Features can be changed, suspended or removed without guarantee of continuous availability.</p>
+    <h3>Acceptable use</h3><p>Do not misuse CineZen, interfere with its operation, attempt unauthorized access, submit abusive content or use the service in violation of applicable law or third-party rights.</p>
+    <h3>Third-party content</h3><p>Movie metadata and external destinations can be provided by third parties. Their terms may apply separately.</p>
+    <h3>No warranty</h3><p>CineZen is provided on an “as available” basis. Information and availability can change and may contain errors.</p>
+    <h3>Updates</h3><p>These terms may be revised as the service develops. Continued use after an update means the current terms apply.</p>`
+  },
+  contact: {
+    title: "Contact CineZen",
+    body: `<p>Need help, want to report an issue, or have a copyright/privacy question? You can contact CineZen through the official Telegram channels below.</p>
+    <div class="contact-box"><h3>Telegram</h3><p><a href="https://t.me/CineZenHQ" target="_blank" rel="noopener">CineZen HQ</a></p>
+    <h3>CineZen Bot</h3><p><a href="https://t.me/SRSMOVIEBOT" target="_blank" rel="noopener">Open CineZen Bot</a></p></div>
+    <p style="margin-top:18px">For a movie request, use the Request Movie option on the CineZen website so the request reaches the admin dashboard.</p>`
+  }
+};
+
+const legalModal = document.getElementById("legalModal");
+const legalTitle = document.getElementById("legalTitle");
+const legalContent = document.getElementById("legalContent");
+function closeCinezenLegal(){
+  legalModal?.classList.remove("open");
+  legalModal?.setAttribute("aria-hidden","true");
+  document.body.classList.remove("legal-open");
+}
+document.querySelectorAll(".legal-link").forEach(link=>{
+  link.addEventListener("click",e=>{
+    e.preventDefault();
+    const page=cinezenLegalPages[link.dataset.legal];
+    if(!page || !legalModal) return;
+    legalTitle.textContent=page.title;
+    legalContent.innerHTML=page.body;
+    legalModal.classList.add("open");
+    legalModal.setAttribute("aria-hidden","false");
+    document.body.classList.add("legal-open");
+  });
+});
+document.getElementById("legalClose")?.addEventListener("click",closeCinezenLegal);
+legalModal?.addEventListener("click",e=>{if(e.target===legalModal) closeCinezenLegal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape") closeCinezenLegal();});

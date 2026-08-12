@@ -121,10 +121,12 @@
 
     <div>
       <h3>LEGAL</h3>
-      <a href="#aboutFooter">Disclaimer</a>
-      <a href="#aboutFooter">FAQ</a>
-      <a href="#aboutFooter">Privacy Policy</a>
-      <a href="#aboutFooter">DMCA</a>
+      <a href="#" class="legal-link" data-legal="disclaimer">Disclaimer</a>
+      <a href="#" class="legal-link" data-legal="faq">FAQ</a>
+      <a href="#" class="legal-link" data-legal="privacy">Privacy Policy</a>
+      <a href="#" class="legal-link" data-legal="dmca">DMCA</a>
+      <a href="#" class="legal-link" data-legal="terms">Terms &amp; Conditions</a>
+      <a href="#" class="legal-link" data-legal="contact">Contact</a>
     </div>
   </div>
 
@@ -171,5 +173,15 @@
 </div>
 
 <script src="/script.js?v=pro1"></script>
+
+<div id="legalModal" class="legal-modal" aria-hidden="true">
+  <div class="legal-modal-card" role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+    <button class="legal-close" id="legalClose" type="button" aria-label="Close">×</button>
+    <div class="legal-kicker">CINEZEN</div>
+    <h2 id="legalTitle"></h2>
+    <div id="legalContent" class="legal-content"></div>
+  </div>
+</div>
+
 </body>
 </html>
